@@ -1,8 +1,19 @@
-from git import Repo
-from git.cmd import Git
-from git.remote import FetchInfo
-repo = Repo("./static")
-repo.remote().push()
-repo.is_dirty()
-repo.remote().pull()
-repo.commit()
+from fastapi import HTTPException
+import subprocess
+from config import REPO_LOCATION
+from concurrent.futures import ProcessPoolExecutor
+import asyncio
+
+
+def pull_repo_sync():
+    return subprocess.run(["git", "pull"], cwd=REPO_LOCATION, capture_output=True)
+
+
+async def pull_repo():
+
+    loop = asyncio.get_running_loop()
+    with ProcessPoolExecutor(max_workers=1) as executor:
+        result = await loop.run_in_executor(executor, pull_repo_sync)
+    if result.returncode != 0:
+        raise HTTPException(status_code=500, detail=result.stderr.decode())
+    return result.stdout.decode()
