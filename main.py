@@ -8,16 +8,30 @@ app = FastAPI()
 
 app.mount("/static", StaticFiles(directory=REPO_LOCATION, html=True), name="static")
 
+# update it self
 
-@app.post("/push_event", dependencies=[Depends(verfy_token)])
-async def push_event(X_Github_Event: str = Header(None), request: Request = None):
+
+@app.post("/autoci/push_event", dependencies=[Depends(verfy_token)])
+async def push_event_ci(X_Github_Event: str = Header(None), request: Request = None):
     if X_Github_Event == "push":
-        return {"message": await pull_repo()}
+        return {"message": await pull_repo(".")}
     elif X_Github_Event == "ping":
         return {"message": "Pong"}
     else:
         raise HTTPException(
             status_code=403, detail="X-Github-Event not supported")
+
+
+@app.post("/push_event", dependencies=[Depends(verfy_token)])
+async def push_event(X_Github_Event: str = Header(None), request: Request = None):
+    if X_Github_Event == "push":
+        return {"message": await pull_repo(REPO_LOCATION)}
+    elif X_Github_Event == "ping":
+        return {"message": "Pong"}
+    else:
+        raise HTTPException(
+            status_code=403, detail="X-Github-Event not supported")
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080)
