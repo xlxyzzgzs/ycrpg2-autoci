@@ -1,3 +1,5 @@
 config.py
+start.sh
 **/__pycache__/*
 static/*
+logs/*

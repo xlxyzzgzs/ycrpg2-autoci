@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 import subprocess
-from config import REPO_LOCATION
+from ..config import REPO_LOCATION
 from concurrent.futures import ProcessPoolExecutor
 import asyncio
 

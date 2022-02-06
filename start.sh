@@ -1,1 +1,0 @@
-uvicorn --port 8080 --workers 1 --log-level info --reload --reload-dir . --host 0.0.0.0 main:app 
