@@ -16,7 +16,7 @@ repo_api = APIRouter(
 async def push_event(X_Github_Event: str = Header(None), request: Request = None):
     if X_Github_Event == "push":
         event = await request.json()
-        if event["head_comment"] and (message := event["head_comment"]["message"]) and message.startswith("#publish"):
+        if event["head_commit"] and (message := event["head_commit"]["message"]) and message.startswith("#publish"):
             return await punlish_new_version()
         else:
             return {"message": "nothing to do"}
